@@ -1,0 +1,176 @@
+/* auth.css - ONLY FOR LOGIN & SIGNUP PAGES */
+
+:root {
+    /* --- COLORS --- */
+    --primary: #023e8a;       
+    --primary-hover: #00296b;
+    --secondary: #00b4d8;     
+    --bg-color: #f8fafc;      
+    --card-bg: #ffffff;       
+    --text-main: #1e293b;     
+    --text-muted: #64748b;    
+    --border-color: #e2e8f0;
+    --error-bg: #fee2e2; 
+    --error-text: #991b1b;
+    --success-bg: #dcfce7; 
+    --success-text: #166534;
+}
+
+[data-theme="dark"] {
+    --primary: #48cae4;       
+    --primary-hover: #90e0ef;
+    --secondary: #0096c7;     
+    --bg-color: #0f172a;      
+    --card-bg: #1e293b;       
+    --text-main: #f8fafc;     
+    --text-muted: #94a3b8;    
+    --border-color: #334155;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+/* --- LOGIN PAGE LAYOUT --- */
+.login-body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    padding: 30px 25px; 
+    border-radius: 12px;
+    width: 100%;
+    max-width: 350px; 
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    position: relative; 
+    z-index: 10;
+}
+
+/* --- UPDATED HEADER FOR LOGO IMAGES --- */
+.login-card .header {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    gap: 0px;              
+    margin-bottom: -10px;
+}
+
+/* 1. The Main Icon (Shield) */
+.auth-icon {
+    height: 135px;  
+    width: auto;
+    object-fit: contain;
+     margin-top: -5px; 
+    display: block;
+}
+
+/* 2. The Banner Text (RakshaUID)*/
+.auth-banner {
+    height: 135px;  
+    width: auto;
+    object-fit: contain;
+    margin-top: -67px; 
+    display: block;
+}
+
+/* 3. The Subtitle (IDENTITY DEFENSE SYSTEM) */
+.login-card p {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+/* --- INPUTS --- */
+.input-group { margin-bottom: 15px; text-align: left; }
+
+.input-group label {
+    font-size: 11px; 
+    font-weight: 700; 
+    color: var(--text-muted);
+    text-transform: uppercase; 
+    display: block;
+    margin-bottom: 6px; 
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px; 
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    box-sizing: border-box;
+    font-size: 0.95rem;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
+}
+
+/* --- BUTTONS --- */
+.btn-secure {
+    width: 100%;
+    padding: 10px 0; 
+    background-color: var(--secondary); 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 5px;
+}
+
+.btn-secure:hover { background-color: var(--primary); }
+
+.checkbox-group {
+    display: flex; align-items: center; gap: 8px; margin: 10px 0 20px 0;
+}
+.checkbox-group label { font-size: 0.85rem; color: var(--text-muted); }
+
+.footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); font-size: 0.85rem; }
+.footer a { color: var(--text-muted); text-decoration: none; }
+.footer a:hover { color: var(--secondary); }
+
+/* --- MESSAGES --- */
+.message { padding: 10px; border-radius: 6px; margin: 15px 0; font-size: 13px; display: none; }
+.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-text); display: block; }
+.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-text); display: block; }
+
+/* --- THEME TOGGLE BUTTON --- */
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 1.3rem;
+}
+.theme-toggle:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: rgba(0, 180, 216, 0.1);
+}

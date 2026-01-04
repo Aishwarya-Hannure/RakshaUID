@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RakshaUID - Register</title>
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <button id="theme-toggle" class="theme-toggle" title="Switch Theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <div class="login-card">
+        <div class="header">
+    <img src="/static/images/logo_main.png" alt="Secure Icon" class="auth-icon">
+    <img src="/static/images/logo_banner.png" alt="RakshaUID" class="auth-banner">
+</div>
+
+        <form id="signup-form">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="agent@secure.gov" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+            <div class="input-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-secure">Sign Up</button>
+        </form>
+
+        <div id="message" class="message hidden"></div>
+
+        <div class="footer">
+            <a href="/login">Already have credentials? Sign In</a>
+        </div>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

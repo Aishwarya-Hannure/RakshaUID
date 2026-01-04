@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forensic Dashboard - RakshaUID</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/static/css/style.css">   
+    <link rel="stylesheet" href="/static/css/verify.css">  
+    <link rel="icon" type="image/png" href="/static/images/logo_main.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="/static/images/logo.png" alt="RakshaUID" class="logo-img">
+            <span>RakshaUID</span>
+        </div>
+
+        <div class="links">
+            <a href="/">Home</a>
+            <a href="/#about">About</a>
+            <a href="/#features">Features</a>
+            <a href="/verify-page" class="active">Dashboard</a>
+            <a href="/#help">Help Desk</a>
+            
+            <button id="theme-toggle" class="theme-toggle" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+    <div class="lookup-wrapper">
+        <a href="javascript:void(0)" id="lookup-link" onclick="toggleLookupUI()">
+            Already verified your Aadhaar?
+        </a>
+
+        <div id="lookup-box" class="lookup-container hidden">
+            <h2>Lookup</h2>
+            <div class="lookup-controls">
+                <input type="text" id="lookup-input" placeholder="Enter verified Aadhaar Number" maxlength="12">
+                <button onclick="performLookup()" class="lookup-btn">
+                    Check Aadhaar Details
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="forensic-dashboard">
+        
+        <div class="dashboard-column left-col">
+            
+            <div class="upload-zone" id="drop-zone">
+                <input type="file" id="cardInput" accept="image/*" hidden>
+                
+                <button id="clear-image-btn" class="clear-btn hidden" title="Remove Image">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div id="upload-placeholder" class="placeholder-content">
+                    <div class="icon-circle">
+                        <i class="fas fa-file-import" id="upload-icon"></i>
+                    </div>
+                    <h3 id="upload-title">Acquire Document Signal</h3>
+                    <p id="upload-desc">Click to select or drag document image</p>
+                </div>
+
+                <img id="image-preview" class="preview-img hidden" src="" alt="Document Signal">
+            </div>
+
+            <button id="action-btn" onclick="handleExecution()" class="cyber-btn">
+                Verify Document
+            </button>
+        </div>
+
+        <div class="dashboard-column right-col">
+            <div class="node-header">
+                <i class="fas fa-microchip"></i> Scan Intelligence Node
+            </div>
+
+            <div class="node-content">
+                
+                <div id="scan-idle" class="scan-placeholder">
+                    <div class="search-icon" id="scan-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 id="scan-status-text">Initialize Scan: Upload document to trigger deep-layer analysis.</h3>
+                </div>
+
+                <div id="scan-loader" class="scan-placeholder hidden">
+                    <div class="loader-circle"></div>
+                    <h3 id="loader-text" style="color: var(--secondary); font-weight: 700;">VERIFYING</h3>
+                    <p id="loader-subtext" style="font-size: 0.8rem; opacity: 0.7;">Please wait, verifying details...</p>
+                </div>
+
+   <div id="scan-results" class="results-grid hidden">
+    
+    <div id="verdict-section" class="verdict-banner hidden">
+        <div class="verdict-header">
+            STATUS: <span id="final-status">ACCEPTED</span>
+        </div>
+        <div class="verdict-sub">
+            CONFIDENCE SCORE: <span id="confidence-score" class="highlight-cyan">98.5%</span>
+        </div>
+        <div class="qr-success-msg">
+            <i class="fas fa-check-circle"></i> QR Code Decoded Successfully
+        </div>
+    </div>
+
+    <div id="ocr-data-container">
+        <div class="data-field-row">
+            <div class="data-group">
+                <label>FULL NAME</label>
+                <span id="res-name">--</span>
+            </div>
+            <div class="data-group">
+                <label>AADHAAR NUMBER</label>
+                <span id="res-uid" class="highlight-cyan">--</span>
+            </div>
+        </div>
+
+        <div class="data-field-row">
+            <div class="data-group">
+                <label>D.O.B</label>
+                <span id="res-dob">--</span>
+            </div>
+            <div class="data-group">
+                <label>EXTRACTED GENDER</label>
+                <span id="res-gender">--</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="step1-btn" onclick="prepareStep2()" class="action-btn hidden" style="margin-top: 30px; width: 100%; background-color: var(--secondary);">
+        <i class="fas fa-qrcode"></i> Verify QR Code
+    </button>
+
+    <button id="step2-btn" onclick="location.reload()" class="action-btn hidden" style="margin-top: 30px; width: 100%; background-color: var(--primary);">
+        <i class="fas fa-redo"></i> Verify Another Document
+    </button>
+
+</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="error-toast" class="error-toast hidden">
+        <i class="fas fa-exclamation-triangle"></i> <span id="error-msg">Error</span>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

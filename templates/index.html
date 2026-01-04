@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RakshaUID - Identity Defense</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/verify.css"> <link rel="icon" type="image/png" href="/static/images/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="/static/images/logo.png" alt="RakshaUID Logo" class="logo-img">
+            <span>RakshaUID</span>
+        </div>
+        <div class="links">
+            <a href="#" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="/verify-page">Dashboard</a>
+            <a href="#help">Help Desk</a>
+            <button id="theme-toggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Advanced Aadhaar Fraud Detection</h1>
+            <p>Secure your identity with AI-powered forensic analysis. Detect forgeries, validate data, and ensure compliance in seconds.</p>
+            <div class="hero-actions">
+                <a href="/verify-page" class="cta-button">
+                    <i class="fas fa-shield-alt"></i> Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    {% include 'components/about.html' %}
+    
+    {% include 'components/features.html' %}
+
+    <section id="help" class="help-section">
+    <div class="container-width">
+        <div class="section-header">
+            <h2>Help Desk</h2>
+            <div class="line"></div>
+        </div>
+        
+        <div class="help-grid">
+            
+            <a href="tel:1947" class="help-card">
+                <div class="icon-box-help phone">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h4>TOLL FREE SUPPORT</h4>
+                <p>1947</p>
+            </a>
+
+            <a href="mailto:help@uidai.gov.in" class="help-card">
+                <div class="icon-box-help mail">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h4>OFFICIAL SUPPORT MAIL</h4>
+                <p>help@uidai.gov.in</p>
+            </a>
+
+            <a href="https://uidai.gov.in/" target="_blank" rel="noopener noreferrer" class="help-card">
+                <div class="icon-box-help portal">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h4>SELF-SERVICE PORTAL</h4>
+                <p>UIDAI.GOV.IN</p>
+            </a>
+
+        </div>
+    </div>
+</section>
+    <footer class="site-footer">
+        <p>© 2025 RakshaUID Defense Systems. All rights reserved.</p>
+    </footer>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

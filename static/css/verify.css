@@ -1,0 +1,438 @@
+/* static/css/verify.css */
+
+/* --- 1. GLOBAL DASHBOARD LAYOUT --- */
+.dashboard-body {
+    background-color: var(--bg-color); 
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.forensic-dashboard {
+    flex: 1;
+    display: flex;
+    gap: 2rem;
+    padding: 3rem;
+    max-width: 1200px; 
+    margin: 0 auto;
+    width: 90%;
+    align-items: flex-start; 
+    box-sizing: border-box;
+}
+
+.dashboard-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- 2. LEFT NODE (UPLOAD - DYNAMIC SIZE) --- */
+.upload-zone {
+    flex: 1;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    /* Positioning for the clear button */
+    position: relative; 
+    overflow: hidden;
+    
+    /* --- DYNAMIC HEIGHT --- */
+    min-height: 450px;    
+    height: fit-content;  
+
+    /* Light Mode */
+    background: #ffffff;
+    border: 2px dashed var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.upload-zone:hover {
+    border-color: var(--secondary);
+    background: #f0f9ff;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Override */
+[data-theme="dark"] .upload-zone {
+    background: rgba(30, 41, 59, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+[data-theme="dark"] .upload-zone:hover {
+    background: rgba(0, 180, 216, 0.05);
+    border-color: var(--secondary);
+    box-shadow: 0 10px 30px -10px rgba(0, 180, 216, 0.15);
+}
+
+/* --- PREVIEW IMAGE (DYNAMIC) --- */
+.preview-img {
+    width: 100%; 
+    height: auto; 
+    max-height: 800px; 
+    object-fit: contain; 
+    padding: 15px;
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
+/* --- DELETE BUTTON --- */
+.clear-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+}
+.clear-btn:hover {
+    background: #ef4444; 
+    transform: scale(1.1);
+}
+
+.placeholder-content { text-align: center; color: var(--text-muted); }
+.placeholder-content h3 { 
+    color: var(--text-main); margin: 15px 0 5px 0; font-weight: 700; 
+}
+
+.icon-circle {
+    width: 60px; height: 60px;
+    background: rgba(0, 180, 216, 0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: var(--secondary);
+    margin: 0 auto;
+}
+
+/* --- 3. BUTTONS --- */
+.cyber-btn {
+    background-color: var(--secondary);
+    color: #ffffff;
+    border: none;
+    padding: 18px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+    transition: all 0.2s;
+    width: 100%;
+}
+.cyber-btn:hover {
+    background-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 180, 216, 0.4);
+}
+
+/* --- 4. RIGHT NODE (INTELLIGENCE - DYNAMIC SIZE) --- */
+.right-col {
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    
+    margin-top: 30px; 
+    
+    height: fit-content; 
+    min-height: 350px;   
+    
+    /* Light Mode */
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.right-col:hover {
+    transform: translateY(-5px);
+    border-color: var(--secondary);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark Mode Override */
+[data-theme="dark"] .right-col {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .right-col:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 20px 50px -10px rgba(0, 180, 216, 0.15);
+}
+
+.node-header {
+    color: var(--secondary);
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex; align-items: center; gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+}
+
+.node-content {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+}
+
+/* --- 5. STATES --- */
+.scan-placeholder { text-align: center; padding: 2rem; }
+.search-icon {
+    font-size: 3rem; color: var(--border-color); margin-bottom: 20px;
+}
+[data-theme="dark"] .search-icon { color: #334155; }
+
+/* Loader */
+.loader-circle {
+    width: 60px; height: 60px;
+    border: 4px solid rgba(0, 180, 216, 0.1);
+    border-top: 4px solid var(--secondary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* --- 6. RESULTS GRID & VERDICT --- */
+.results-grid {
+    border-radius: 16px;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+}
+[data-theme="dark"] .results-grid {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.data-field-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+.data-field-row:last-child { border-bottom: none; margin-bottom: 0; }
+
+[data-theme="dark"] .data-field-row { border-color: #334155; }
+
+.data-group { display: flex; flex-direction: column; gap: 8px; }
+
+.data-group label {
+    font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+}
+
+.data-group span {
+    font-size: 1.25rem; font-weight: 700; color: var(--text-main); font-family: 'Courier New', monospace;
+}
+
+.highlight-cyan { color: var(--secondary) !important; }
+[data-theme="dark"] .highlight-cyan { text-shadow: 0 0 10px rgba(0, 180, 216, 0.3); }
+
+/* VERDICT BANNER STYLES */
+.verdict-banner {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.verdict-header {
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-main);
+    letter-spacing: 1px;
+}
+
+.status-accepted { color: #10b981; } 
+.status-rejected { color: #ef4444; }
+.status-suspicious { color: #f59e0b; } 
+
+.verdict-sub {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.qr-success-msg {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #10b981; /* Green */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="dark"] .verdict-banner {
+    border-color: #334155;
+}
+
+/* Button Separation in Results */
+#scan-results .action-btn {
+    margin-top: 30px;
+    padding: 15px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.2);
+    transition: all 0.3s ease;
+    border-top: 1px solid var(--border-color); 
+}
+
+#scan-results .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 180, 216, 0.3);
+}
+
+/* --- 7. UTILS & TOAST --- */
+.error-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #ef4444; color: white; padding: 12px 24px; border-radius: 50px;
+    font-weight: 600; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);
+    display: flex; align-items: center; gap: 10px; z-index: 2000;
+}
+.error-toast.success-mode {
+    background: #10b981 !important; /* Green */
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4) !important;
+}
+.hidden { display: none !important; }
+
+@media (max-width: 900px) {
+    .forensic-dashboard { flex-direction: column; align-items: center; }
+    .right-col { margin-top: 0; min-height: auto; width: 100%; }
+}
+.lookup-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px; 
+    margin-bottom: -10px; 
+    z-index: 10;
+}
+
+/* The Link */
+#lookup-link {
+    color: var(--secondary);
+    font-weight: 600;
+    text-decoration: underline;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+#lookup-link:hover {
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* The Box (Hidden by default) */
+.lookup-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 25px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.lookup-container h2 {
+    margin: 0 0 20px 0;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lookup-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Input Field */
+#lookup-input {
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 1.3rem;
+    width: 280px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+/* --- NEW: Reduce Placeholder Font Size --- */
+#lookup-input::placeholder {
+    font-size: 0.95rem;  
+    font-weight: 700;    
+    letter-spacing: -0.5px; 
+    opacity: 0.9;
+}
+
+#lookup-input:focus {
+    border-color: var(--secondary);
+}
+
+/* Button */
+.lookup-btn {
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s;
+}
+
+.lookup-btn:hover {
+    background-color: var(--primary);
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .lookup-container {
+    background: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] #lookup-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: white;
+}
