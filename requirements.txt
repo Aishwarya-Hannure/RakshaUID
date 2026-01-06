@@ -1,0 +1,25 @@
+# --- Web Framework ---
+fastapi
+uvicorn
+python-multipart
+Jinja2
+starlette
+
+# --- Deep Learning (CNNs) ---
+tensorflow
+
+# --- OCR (Text Extraction) ---
+paddleocr
+
+# --- Computer Vision & Face Recognition ---
+opencv-python
+
+# --- Machine Learning (Fraud Detection) ---
+scikit-learn
+joblib
+
+# --- Data Handling & Utils ---
+numpy
+pandas
+pyaadhaar
+pyzbar

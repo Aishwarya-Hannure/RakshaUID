@@ -25,6 +25,7 @@ from Pipelines.forensic_analyzer import analyze_image_forensics
 from Pipelines.fraud_assement import assess_fraud
 from Pipelines.model_json import predict_fraud
 from Pipelines.final_decision import make_final_decision
+from Pipelines.face_matcher import verify_face # <--- NEW IMPORT
 
 app = FastAPI(title="RakshaUID Identity Defense")
 
@@ -35,25 +36,18 @@ app.add_middleware(
     max_age=1209600  
 )
 
-# --- USER DATABASE SETUP (JSON FILE FOR LOGIN) ---
+# --- USER DATABASE SETUP ---
 DB_FILE = "users_db.json"
 
 def load_users():
-    """Load users from the JSON file."""
-    if not os.path.exists(DB_FILE):
-        return {}
+    if not os.path.exists(DB_FILE): return {}
     try:
-        with open(DB_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {}
+        with open(DB_FILE, "r") as f: return json.load(f)
+    except: return {}
 
 def save_users(db_data):
-    """Save users to the JSON file."""
-    with open(DB_FILE, "w") as f:
-        json.dump(db_data, f, indent=4)
+    with open(DB_FILE, "w") as f: json.dump(db_data, f, indent=4)
 
-# --- HELPER: Password Hashing ---
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -65,24 +59,21 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # --- LOAD MODELS ---
-print("Loading Models...")
 try:
     cnn_model = tf.keras.models.load_model("Models/aadhaar_classifier_final.h5")
     fraud_model = joblib.load("Models/RandomForest_model.pkl")
     print("Models Loaded Successfully.")
 except Exception as e:
-    print(f"Warning: Models not found or error loading ({e}). Server will run but predictions will fail.")
+    print(f"Warning: Models not found ({e}).")
     cnn_model = None
     fraud_model = None
 
 # ==========================================================
-#  AUTH ROUTES (Login/Signup)
+#  AUTH ROUTES
 # ==========================================================
-
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
-    if request.session.get("user"):
-        return RedirectResponse(url="/verify-page")
+    if request.session.get("user"): return RedirectResponse(url="/verify-page")
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.get("/signup", response_class=HTMLResponse)
@@ -98,13 +89,10 @@ async def logout(request: Request):
 async def api_login(request: Request, data: dict = Body(...)):
     email = data.get("email")
     password = data.get("password")
-    
     users_db = load_users()
     user = users_db.get(email)
-    
     if not user or user["password"] != hash_password(password):
-        return JSONResponse(content={"success": False, "message": "Invalid email or passphrase."}, status_code=401)
-    
+        return JSONResponse(content={"success": False, "message": "Invalid credentials."}, status_code=401)
     request.session["user"] = email
     return JSONResponse(content={"success": True, "redirect_url": "/verify-page"})
 
@@ -112,43 +100,32 @@ async def api_login(request: Request, data: dict = Body(...)):
 async def api_signup(data: dict = Body(...)):
     email = data.get("email")
     password = data.get("password")
-    
     users_db = load_users()
-    
     if email in users_db:
-        return JSONResponse(content={"success": False, "message": "Account already exists."}, status_code=409)
-    
-    users_db[email] = {
-        "password": hash_password(password),
-        "created_at": "today"
-    }
+        return JSONResponse(content={"success": False, "message": "Account exists."}, status_code=409)
+    users_db[email] = {"password": hash_password(password), "created_at": "today"}
     save_users(users_db)
-    
-    return JSONResponse(content={"success": True, "message": "Registered! Please sign in.", "redirect_url": "/login"})
-
+    return JSONResponse(content={"success": True, "message": "Registered!", "redirect_url": "/login"})
 
 # ==========================================================
-#  APP ROUTES (Pages)
+#  APP ROUTES
 # ==========================================================
-
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/verify-page", response_class=HTMLResponse)
 async def verify_page(request: Request):
-    user = request.session.get("user")
-    if not user:
-        return RedirectResponse(url="/login")
+    if not request.session.get("user"): return RedirectResponse(url="/login")
     return templates.TemplateResponse("verify.html", {"request": request})
 
 # ==========================================================
-#  API STEP 1: CARD CHECK (CNN + OCR Extraction)
+#  STEP 1: ANALYZE CARD (UPDATED TO RETURN FILENAME)
 # ==========================================================
 @app.post("/api/analyze-card")
 async def analyze_card_step(file: UploadFile = File(...)):
     if cnn_model is None:
-        return JSONResponse({"is_aadhaar": False, "message": "Models not loaded on server."})
+        return JSONResponse({"is_aadhaar": False, "message": "Models not loaded."})
 
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
@@ -160,8 +137,7 @@ async def analyze_card_step(file: UploadFile = File(...)):
         clean_img = processed_data["processed_image"]
         cv2.imwrite(clean_path, clean_img)
         target_path = clean_path
-    except Exception as e:
-        print(f"Preprocessing warning: {e}")
+    except:
         target_path = file_path
 
     cnn_out = cnn_predict(cnn_model, target_path)
@@ -179,39 +155,57 @@ async def analyze_card_step(file: UploadFile = File(...)):
 
         return JSONResponse(content={
             "is_aadhaar": True,
-            "message": "Aadhaar structure detected. Please upload QR code.",
-            "details": cnn_out,
-            "extracted_data": extracted_fields
+            "message": "Aadhaar Detected. Proceeding to Face Verification.",
+            "aadhaar_path": file.filename, 
+            "extracted_data": extracted_fields,
+            "details": cnn_out
         })
 
 # ==========================================================
-#  NEW ROUTE: DATABASE LOOKUP
+#  STEP 2: FACE VERIFICATION (NEW ENDPOINT)
+# ==========================================================
+@app.post("/api/verify-face")
+async def verify_face_step(
+    person_image: UploadFile = File(...), 
+    aadhaar_filename: str = Body(...)
+):
+    # 1. Save Person Image
+    temp_person = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+    temp_person.write(await person_image.read())
+    person_path = temp_person.name
+    temp_person.close()
+
+    # 2. Get Aadhaar Path
+    aadhaar_path = os.path.join(UPLOAD_DIR, aadhaar_filename)
+
+    # 3. Verify using your provided logic
+    result = verify_face(aadhaar_path, person_path)
+
+    # 4. Cleanup Person Image
+    os.remove(person_path)
+
+    if result["match"]:
+        return JSONResponse(content={"success": True, "message": "Biometrics Matched!", "score": result["confidence"]})
+    else:
+        return JSONResponse(content={"success": False, "message": f"Face Mismatch (Score: {result['confidence']}%)"})
+
+# ==========================================================
+#  DATABASE LOOKUP
 # ==========================================================
 @app.post("/api/lookup")
 async def lookup_aadhaar(data: dict = Body(...)):
     uid = data.get('aadhaar_number')
-    
     if not uid or len(uid) != 12:
-        return JSONResponse(content={"success": False, "message": "Invalid Aadhaar Number format."})
+        return JSONResponse(content={"success": False, "message": "Invalid format."})
 
-    # Check Database using database.py
     user = database.get_user_by_aadhaar(uid)
-    
     if user:
-        return JSONResponse(content={
-            "success": True, 
-            "found": True,
-            "data": user
-        })
+        return JSONResponse(content={"success": True, "found": True, "data": user})
     else:
-        return JSONResponse(content={
-            "success": True, 
-            "found": False,
-            "message": "Aadhaar is not verified yet."
-        })
+        return JSONResponse(content={"success": True, "found": False, "message": "Not verified yet."})
 
 # ==========================================================
-#  API STEP 2: FULL VERIFICATION (With DB Save)
+#  STEP 3: FULL VERIFICATION (QR + FRAUD)
 # ==========================================================
 @app.post("/api/verify-full")
 async def verify_full_process(
@@ -227,11 +221,9 @@ async def verify_full_process(
     try:
         clean_path = raw_image_path.replace(".jpg", "_clean.jpg")
         processed_data = preprocess_document(raw_image_path)
-        clean_img = processed_data["processed_image"]
-        cv2.imwrite(clean_path, clean_img)
+        cv2.imwrite(clean_path, processed_data["processed_image"])
         image_path = clean_path 
-    except Exception as e:
-        print(f"WARNING: Preprocessing failed ({e})")
+    except: pass
 
     cnn_out = cnn_predict(cnn_model, image_path)
     ocr_result = run_ocr(image_path)
@@ -244,10 +236,8 @@ async def verify_full_process(
         tmp_qr.close()
         qr_path = tmp_qr.name
         
-        backup_qr_result = validate_qr(qr_path)
-        if backup_qr_result["status"] == "DECODED":
-            qr_result = backup_qr_result
-        
+        backup_qr = validate_qr(qr_path)
+        if backup_qr["status"] == "DECODED": qr_result = backup_qr
         os.remove(qr_path)
 
     validation = rule_validation(aadhaar_fields, qr_result["status"])
@@ -256,39 +246,28 @@ async def verify_full_process(
     fraud_rule = assess_fraud(validation, qr_result, consistency, forensics)
 
     record_for_ml = {
-        "validation": validation,
-        "consistency": consistency,
-        "image_forensics": forensics,
-        "ocr_extracted": aadhaar_fields,
-        "qr": qr_result
+        "validation": validation, "consistency": consistency,
+        "image_forensics": forensics, "ocr_extracted": aadhaar_fields, "qr": qr_result
     }
-
     fraud_ml = predict_fraud(fraud_model, record_for_ml)
     final_decision = make_final_decision(cnn_out, fraud_ml, fraud_rule)
 
-    # --- SAVE TO DATABASE IF ACCEPTED ---
-    decision_status = final_decision.get("final_decision", "REJECTED")
-    aadhaar_num = aadhaar_fields.get("aadhaar_number", "").replace(" ", "")
-
-    if decision_status == "ACCEPTED" and aadhaar_num:
+    if final_decision.get("final_decision") == "ACCEPTED" and aadhaar_fields.get("aadhaar_number"):
         prob = fraud_ml.get("fraud_probability", 0)
-        confidence_score = (1 - prob) * 100
-        
         db_data = {
-            "aadhaar_number": aadhaar_num,
+            "aadhaar_number": aadhaar_fields.get("aadhaar_number", "").replace(" ", ""),
             "name": aadhaar_fields.get("name"),
             "dob": aadhaar_fields.get("dob"),
             "gender": aadhaar_fields.get("gender"),
             "status": "ACCEPTED",
-            "confidence": confidence_score
+            "confidence": (1 - prob) * 100
         }
         database.save_verified_user(db_data)
-    # ------------------------------------
 
     return {
-        "cnn_result": cnn_out,
+        "cnn_result": cnn_out, 
         "ocr_extracted": aadhaar_fields,
-        "qr": qr_result,
-        "final_decision": final_decision,
+        "qr": qr_result, 
+        "final_decision": final_decision, 
         "fraud_ml": fraud_ml
     }

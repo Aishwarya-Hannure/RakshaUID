@@ -6,7 +6,6 @@
     <title>Forensic Dashboard - RakshaUID</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="/static/css/style.css">   
     <link rel="stylesheet" href="/static/css/verify.css">  
     <link rel="icon" type="image/png" href="/static/images/logo_main.png">
@@ -33,6 +32,7 @@
             <a href="/logout" class="logout-btn">Logout</a>
         </div>
     </nav>
+
     <div class="lookup-wrapper">
         <a href="javascript:void(0)" id="lookup-link" onclick="toggleLookupUI()">
             Already verified your Aadhaar?
@@ -69,6 +69,21 @@
                 </div>
 
                 <img id="image-preview" class="preview-img hidden" src="" alt="Document Signal">
+
+                <video id="camera-stream" class="preview-img hidden" autoplay playsinline></video>
+                <canvas id="camera-canvas" class="hidden"></canvas>
+
+                <div id="face-options" class="hidden" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; width: 100%;">
+                    <button id="btn-upload-face" class="action-btn" style="margin:0; min-width: 120px; background: var(--secondary);">
+                        <i class="fas fa-file-upload"></i> Upload
+                    </button>
+                    <button id="btn-open-camera" class="action-btn" style="margin:0; background: #00b4d8; min-width: 120px;">
+                        <i class="fas fa-camera"></i> Camera
+                    </button>
+                    <button id="btn-capture-face" class="action-btn hidden" style="margin:0; background: #ef4444; min-width: 120px;">
+                        <i class="fas fa-circle"></i> Capture
+                    </button>
+                </div>
             </div>
 
             <button id="action-btn" onclick="handleExecution()" class="cyber-btn">
@@ -96,53 +111,49 @@
                     <p id="loader-subtext" style="font-size: 0.8rem; opacity: 0.7;">Please wait, verifying details...</p>
                 </div>
 
-   <div id="scan-results" class="results-grid hidden">
-    
-    <div id="verdict-section" class="verdict-banner hidden">
-        <div class="verdict-header">
-            STATUS: <span id="final-status">ACCEPTED</span>
-        </div>
-        <div class="verdict-sub">
-            CONFIDENCE SCORE: <span id="confidence-score" class="highlight-cyan">98.5%</span>
-        </div>
-        <div class="qr-success-msg">
-            <i class="fas fa-check-circle"></i> QR Code Decoded Successfully
-        </div>
-    </div>
+               <div id="scan-results" class="results-grid hidden">
+                
+                <div id="verdict-section" class="verdict-banner hidden">
+                    <div class="verdict-header">
+                        STATUS: <span id="final-status">ACCEPTED</span>
+                    </div>
+                    <div class="verdict-sub">
+                        CONFIDENCE SCORE: <span id="confidence-score" class="highlight-cyan">98.5%</span>
+                    </div>
+                    <div class="qr-success-msg">
+                        <i class="fas fa-check-circle"></i> QR Code Decoded Successfully
+                    </div>
+                </div>
 
-    <div id="ocr-data-container">
-        <div class="data-field-row">
-            <div class="data-group">
-                <label>FULL NAME</label>
-                <span id="res-name">--</span>
+                <div id="ocr-data-container">
+                    <div class="data-field-row">
+                        <div class="data-group">
+                            <label>FULL NAME</label>
+                            <span id="res-name">--</span>
+                        </div>
+                        <div class="data-group">
+                            <label>AADHAAR NUMBER</label>
+                            <span id="res-uid" class="highlight-cyan">--</span>
+                        </div>
+                    </div>
+
+                    <div class="data-field-row">
+                        <div class="data-group">
+                            <label>D.O.B</label>
+                            <span id="res-dob">--</span>
+                        </div>
+                        <div class="data-group">
+                            <label>EXTRACTED GENDER</label>
+                            <span id="res-gender">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="step2-btn" onclick="location.reload()" class="action-btn hidden" style="margin-top: 30px; width: 100%; background-color: var(--primary);">
+                    <i class="fas fa-redo"></i> Verify Another Document
+                </button>
+
             </div>
-            <div class="data-group">
-                <label>AADHAAR NUMBER</label>
-                <span id="res-uid" class="highlight-cyan">--</span>
-            </div>
-        </div>
-
-        <div class="data-field-row">
-            <div class="data-group">
-                <label>D.O.B</label>
-                <span id="res-dob">--</span>
-            </div>
-            <div class="data-group">
-                <label>EXTRACTED GENDER</label>
-                <span id="res-gender">--</span>
-            </div>
-        </div>
-    </div>
-
-    <button id="step1-btn" onclick="prepareStep2()" class="action-btn hidden" style="margin-top: 30px; width: 100%; background-color: var(--secondary);">
-        <i class="fas fa-qrcode"></i> Verify QR Code
-    </button>
-
-    <button id="step2-btn" onclick="location.reload()" class="action-btn hidden" style="margin-top: 30px; width: 100%; background-color: var(--primary);">
-        <i class="fas fa-redo"></i> Verify Another Document
-    </button>
-
-</div>
             </div>
         </div>
 
