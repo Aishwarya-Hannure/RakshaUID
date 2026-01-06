@@ -7,7 +7,9 @@ let cameraStream = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- THEME RESTORATION ---
+    // =========================================================
+    // 1. THEME RESTORATION (Works on ALL pages)
+    // =========================================================
     const toggleBtn = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
     const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
@@ -26,55 +28,155 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FILE INPUT HANDLER ---
-    const fileInput = document.getElementById('cardInput');
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    // =========================================================
+    // 2. AUTHENTICATION LOGIC (Added to fix Login/Signup)
+    // =========================================================
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const messageDiv = document.getElementById('message');
 
-        if (currentStep === 1) {
-            // STEP 1: Upload Aadhaar
-            cardFile = file;
-            showPreview(file);
-        } else if (currentStep === 2) {
-            // STEP 2: Upload Face
-            showPreview(file);
-            uploadFaceForVerification(file);
-        } else if (currentStep === 3) {
-            // STEP 3: Upload QR
-            qrFile = file;
-            showPreview(file);
+    function showAuthMessage(type, text) {
+        if(messageDiv) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerText = text;
+            messageDiv.classList.remove('hidden');
         }
-    });
+    }
 
-    document.getElementById('drop-zone').addEventListener('click', () => {
-        if (currentStep !== 2) fileInput.click();
-    });
+    // --- LOGIN HANDLER ---
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const formData = new FormData(loginForm);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Handle "Remember Me" if present
+            const rememberBox = document.getElementById('remember');
+            data.remember = rememberBox ? rememberBox.checked : false;
 
-    document.getElementById('clear-image-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        resetUploadZone();
-    });
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = result.redirect_url;
+                } else {
+                    showAuthMessage('error', result.message);
+                }
+            } catch (error) {
+                console.error("Login Error:", error);
+                showAuthMessage('error', 'Server connection failed.');
+            }
+        });
+    }
 
-    // --- FACE BUTTONS ---
-    document.getElementById('btn-upload-face').addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
-    });
+    // --- SIGNUP HANDLER ---
+    if (signupForm) {
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(signupForm);
+            const data = Object.fromEntries(formData.entries());
 
-    document.getElementById('btn-open-camera').addEventListener('click', (e) => {
-        e.stopPropagation();
-        startCamera();
-    });
+            if (data.password !== data.confirm_password) {
+                showAuthMessage('error', 'Passphrases do not match.');
+                return;
+            }
 
-    document.getElementById('btn-capture-face').addEventListener('click', (e) => {
-        e.stopPropagation();
-        capturePhoto();
-    });
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAuthMessage('success', result.message);
+                    setTimeout(() => window.location.href = result.redirect_url, 2000);
+                } else {
+                    showAuthMessage('error', result.message);
+                }
+            } catch (error) {
+                console.error("Signup Error:", error);
+                showAuthMessage('error', 'Server connection failed.');
+            }
+        });
+    }
+
+    // =========================================================
+    // 3. DASHBOARD LOGIC (Wrapped to prevent Login Page Crash)
+    // =========================================================
+    const fileInput = document.getElementById('cardInput');
+    
+    // Only run this if we are on the dashboard page
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (currentStep === 1) {
+                // STEP 1: Upload Aadhaar
+                cardFile = file;
+                showPreview(file);
+            } else if (currentStep === 2) {
+                // STEP 2: Upload Face
+                showPreview(file);
+                uploadFaceForVerification(file);
+            } else if (currentStep === 3) {
+                // STEP 3: Upload QR
+                qrFile = file;
+                showPreview(file);
+            }
+        });
+
+        const dropZone = document.getElementById('drop-zone');
+        if (dropZone) {
+            dropZone.addEventListener('click', () => {
+                if (currentStep !== 2) fileInput.click();
+            });
+        }
+
+        const clearBtn = document.getElementById('clear-image-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resetUploadZone();
+            });
+        }
+
+        // --- FACE BUTTONS ---
+        const btnUploadFace = document.getElementById('btn-upload-face');
+        if (btnUploadFace) {
+            btnUploadFace.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.click();
+            });
+        }
+
+        const btnOpenCamera = document.getElementById('btn-open-camera');
+        if (btnOpenCamera) {
+            btnOpenCamera.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startCamera();
+            });
+        }
+
+        const btnCaptureFace = document.getElementById('btn-capture-face');
+        if (btnCaptureFace) {
+            btnCaptureFace.addEventListener('click', (e) => {
+                e.stopPropagation();
+                capturePhoto();
+            });
+        }
+    }
 });
 
 // =========================================================
-// 2. MAIN EXECUTION FLOW
+// 4. MAIN EXECUTION FLOW
 // =========================================================
 async function handleExecution() {
     if (currentStep === 1) {
