@@ -1,25 +1,30 @@
 # --- Web Framework ---
-fastapi
-uvicorn
-python-multipart
-Jinja2
-starlette
+fastapi==0.128.0
+uvicorn==0.40.0
+python-multipart==0.0.21
+Jinja2==3.1.6
+starlette==0.50.0
 
 # --- Deep Learning (CNNs) ---
-tensorflow
+tensorflow==2.20.0
 
 # --- OCR (Text Extraction) ---
-paddleocr
+paddlepaddle==3.2.2
+paddleocr==3.3.2
 
 # --- Computer Vision & Face Recognition ---
-opencv-python
+opencv-python==4.10.0.88
+opencv_contrib_python==4.10.0.84
 
 # --- Machine Learning (Fraud Detection) ---
-scikit-learn
-joblib
+scikit-learn==1.7.2
+joblib==1.5.3
 
 # --- Data Handling & Utils ---
-numpy
-pandas
-pyaadhaar
-pyzbar
+numpy==2.4.1
+pandas==2.3.3
+pyaadhaar==2.0.2
+pyzbar==0.1.9
+
+imutils==0.5.4
+Pillow==12.1.0
